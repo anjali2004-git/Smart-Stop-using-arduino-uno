@@ -1,0 +1,81 @@
+Arduino Code :
+// Include the library code for LCD and I2C communication
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+// Initialize the LCD on address 0x27 for a 16 characters and 2 line display
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+// === Pin Definitions ===
+const int echoPin = 7; // Echo pin of ultrasonic sensor
+const int trigPin = 8; // Trigger pin of ultrasonic sensor
+const int motorB_1A = 9; // Motor control pin 1
+const int motorB_2A = 10; // Motor control pin 2
+const int redLED = 11; // Red LED
+const int greenLED = 12; // Green LED
+// === Variables ===
+int speed = 0; // Initialize speed at 0
+unsigned long lastBlink = 0; // Last time the LED blinked
+int ledState = LOW; // Current state of the red LED
+void setup() {
+Serial.begin(9600); // Initialize serial communication at 9600 baud rate
+pinMode(echoPin, INPUT); // Set echo pin as input for receiving signals
+pinMode(trigPin, OUTPUT); // Set trig pin as output for sending signals
+pinMode(motorB_1A, OUTPUT); // Set motor control pin 1 as output
+pinMode(motorB_2A, OUTPUT); // Set motor control pin 2 as output
+pinMode(redLED, OUTPUT); // Set red LED pin as output
+pinMode(greenLED, OUTPUT); // Set green LED pin as output
+lcd.init(); // Initialize the LCD
+lcd.backlight(); // Turn on the backlight
+}
+void loop() {
+float distance = readSensorData(); // Get distance from ultrasonic sensor
+int intDistance = round(distance); // Round the distance to the nearest integer
+speed = intDistance < 6 ? 0 : (intDistance - 5) * 15;
+speed = min(speed, 255); // Ensure speed does not exceed 255
+controlMotor(speed); // Control motor speed based on updated speed
+unsigned long currentMillis = millis();
+// Control LED states based on distance
+if (intDistance < 5) {
+digitalWrite(redLED, HIGH); // Red LED stays on if distance is less than 5 cm
+digitalWrite(greenLED, LOW); // Green LED is off
+} else if (intDistance < 20) {
+// Blink red LED if distance is less than 20 cm
+if (currentMillis - lastBlink >= 250) {
+lastBlink = currentMillis;
+ledState = !ledState;
+digitalWrite(redLED, ledState);
+}
+digitalWrite(greenLED, LOW);
+} else {
+digitalWrite(redLED, LOW); // Turn off red LED if distance is 20 cm or more
+digitalWrite(greenLED, HIGH); // Green LED stays on
+}
+// Update LCD display
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Distance: ");
+lcd.print(intDistance);
+lcd.setCursor(0, 1);
+lcd.print("Speed: ");
+lcd.print(speed);
+delay(100); // Short delay to stabilize sensor readings
+}
+// Read and calculate distance from ultrasonic sensor
+float readSensorData() {
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+unsigned long duration = pulseIn(echoPin, HIGH);
+float distance = duration / 58.00; // Convert duration to distance in cm
+return distance;
+}
+// Adjust motor speed
+void controlMotor(int speed) {
+analogWrite(motorB_1A, speed); // Control speed via PWM on Pin 9
+if (speed > 0) {
+digitalWrite(motorB_2A, LOW); // Forward direction
+} else {
+digitalWrite(motorB_2A, HIGH); // Reverse direction (if speed is negative)
+}
+}
