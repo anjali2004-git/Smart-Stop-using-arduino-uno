@@ -1,0 +1,67 @@
+Arduino Uno
+The Arduino UNO acts as the central microcontroller for the entire system. It
+processes input from the ultrasonic sensor, controls the motor, and communicates
+with the LCD and LEDs. It runs the code that handles logic and decision-making
+based on sensor data.
+Role:
+o Processes data from sensors.
+o Controls motor speed.
+o Manages display output and LED indicators.
+o Executes the logic for safety alerts.
+
+Ultrasonic Sensor (HC-SR04)
+The HC-SR04 ultrasonic sensor is used to measure the distance between the
+vehicle (or system) and any obstacle ahead of it. This data is then used to adjust
+the motor speed and trigger the LED indicators based on proximity.
+Role:
+o Sends ultrasonic waves and measures the time taken for the wave to
+return (echo).
+o Provides distance data to the Arduino, which is then used for decisionmaking
+(e.g., stop or slow down the vehicle).
+  
+LCD (Liquid Crystal Display) - I2C
+The LCD is used to provide real-time feedback to the user. It displays the
+distance from the obstacle and the motor speed for monitoring and
+troubleshooting purposes.
+Role:
+o Displays key information such as current distance and speed.
+o Enhances the user interface and provides a clear, visual representation
+of the system's status.
+  
+DC Motor
+The DC motor is responsible for driving the vehicle. Based on the sensor
+input, it adjusts speed, or stops, depending on the distance detected by the
+ultrasonic sensor.
+Role:
+o The motor is used to simulate the vehicle’s movement.
+o Speed and direction of the motor are controlled via the Arduino based on
+the obstacle distance.
+  
+Red and Green LEDs
+Red LED and Green LED serve as visual indicators to alert the user about the
+system’s status based on distance.
+Red LED: Turns on when the vehicle is very close to an obstacle (danger zone).
+Green LED: Turns on when the vehicle is at a safe distance.
+Role:
+o Provide clear, visual feedback to indicate whether the vehicle is safe or needs to stop/slow down.
+  
+Resistors (for LEDs)
+Resistors are used to limit the current flowing through the LEDs, preventing them
+from being damaged by excess current. Typically, 1kΩ resistors are used in series with
+each LED.
+Role:
+o Protect the LEDs from excess current.
+o Ensure the LEDs light up without burning out.
+  
+Wires and Breadboard
+Wires and a breadboard are used for connecting all the components together
+in a circuit.
+Role:
+o Wires connect the Arduino to the sensor, motor, LEDs, and LCD.
+o The breadboard is used to make temporary connections for
+prototyping and testing without the need for soldering.
+Arduino Cable
+Essential for uploading code and providing power to the Arduino from the
+laptop.
+Power Supply
+Powers the laptop, ensuring it runs the developm
